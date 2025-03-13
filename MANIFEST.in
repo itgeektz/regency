@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include regency *.css
+recursive-include regency *.csv
+recursive-include regency *.html
+recursive-include regency *.ico
+recursive-include regency *.js
+recursive-include regency *.json
+recursive-include regency *.md
+recursive-include regency *.png
+recursive-include regency *.py
+recursive-include regency *.svg
+recursive-include regency *.txt
+recursive-exclude regency *.pyc
