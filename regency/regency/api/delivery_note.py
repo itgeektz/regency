@@ -1,14 +1,28 @@
 import re
 import frappe
+from hms_tz.nhif.api.delivery_note import set_original_item
 
-def after_insert(doc, method):
+def before_insert(doc, method):
+    # ONLY enqueue
+    frappe.enqueue(
+        "regency.api.delivery_note.set_original_item_async",
+        doc_name=doc.name,
+        queue="default"
+    )
+
+def set_original_item_async(doc_name):
+    doc = frappe.get_doc("Delivery Note", doc_name)
+
+    # SAFE: modify + save here (outside transaction)
     for row in doc.items:
-        if "frequency" not in str(row.description):
-            if row.si_detail:
-                row.description = frappe.get_value("Sales Invoice Item", row.si_detail, "dosage_info")
-    
-    doc.save(ignore_permissions=True)
+        if row.si_detail:
+            desc = frappe.get_value("Sales Invoice Item", row.si_detail, "dosage_info")
+            if "frequency" not in (row.description or ""):
+                row.description = desc
 
+    set_original_item(doc)
+
+    doc.db_update()   # or doc.save(ignore_permissions=True)
 def on_submit(doc, method):
     if doc.form_sales_invoice and doc.patient and doc.reference_name:
         update_drug_prescription(doc)

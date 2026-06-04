@@ -112,7 +112,7 @@ doc_events = {
         "before_submit": "regency.regency.api.sales_invoice.before_submit",
     },
     "Delivery Note": {
-        "after_insert": "regency.regency.api.delivery_note.after_insert",
+    #    "before_insert": "regency.regency.api.delivery_note.before_insert",
         "on_submit": "regency.regency.api.delivery_note.on_submit",
     },
     "Sales Order": {

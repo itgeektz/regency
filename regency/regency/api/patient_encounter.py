@@ -38,15 +38,9 @@ def on_submit(doc, method):
     elif not doc.inpatient_record:
         create_sales_order(doc)
 
-
 def create_sales_order(doc):
-    if doc.company == "Regency Medical Centre HQ":
-        warehouse = "A Block Ground Floor Cash Pharmacy - RMCHQ"
-    elif doc.company == "Regency Specialized Polyclinic For Dialysis and Chemotherapy":
-        warehouse = "A Block Ground Floor Pharmacy - RSPDC"
-    elif doc.company == "Regency Specialised Polyclinic":
-        warehouse = "Ground Floor Pharmacy - RSP"
-    else:
+    warehouse = "Stores - CCD"  # default warehouse for sales order creation
+    if not warehouse:
         frappe.throw(
             f"Sales order can not be created because of unkown warehouse to use for company: {doc.company}"
         )
@@ -129,12 +123,12 @@ def get_items_from_encounter(doc, warehouse):
 
 
 def create_sales_order_from_encounter(doc, items, warehouse):
+    #price_list = frappe.get_value(
+    #    "Mode of Payment", doc.get("mode_of_payment"), "price_list"
+    #)
+    #if not price_list:
     price_list = frappe.get_value(
-        "Mode of Payment", doc.get("mode_of_payment"), "price_list"
-    )
-    if not price_list:
-        price_list = frappe.get_value(
-            "Company", doc.get("company"), "default_price_list"
+        "Company", doc.get("company"), "default_price_list"
         )
     if not price_list:
         frappe.throw("Please set Price List in Mode of Payment or Company")
